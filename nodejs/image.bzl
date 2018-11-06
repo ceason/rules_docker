@@ -98,6 +98,9 @@ load("@build_bazel_rules_nodejs//:defs.bzl", "nodejs_binary")
 def nodejs_image(
         name,
         base = None,
+        launcher = None,
+        launcher_args = [],
+        launcher_path = None,
         data = [],
         layers = [],
         node_modules = "//:node_modules",
@@ -143,4 +146,7 @@ def nodejs_image(
         tags = tags,
         args = kwargs.get("args"),
         data = kwargs.get("data"),
+        launcher = launcher,
+        launcher_args = launcher_args,
+        launcher_path = launcher_path,
     )
