@@ -14,6 +14,13 @@
 package(default_visibility = ["//visibility:private"])
 
 load(":toolchain.bzl", "docker_toolchain")
+load("@bazel_skylib//:skylark_library.bzl", "skylark_library")
+
+skylark_library(
+    name = "docker",
+    srcs = ["toolchain.bzl"],
+    visibility = ["//visibility:public"],
+)
 
 # Docker toolchain type
 toolchain_type(
@@ -30,42 +37,30 @@ docker_toolchain(
 
 toolchain(
     name = "default_linux_toolchain",
-    exec_compatible_with = [
-        "@bazel_tools//platforms:linux",
-        "@bazel_tools//platforms:x86_64",
-    ],
     target_compatible_with = [
         "@bazel_tools//platforms:linux",
         "@bazel_tools//platforms:x86_64",
     ],
-    toolchain = ":default_toolchain_impl",
+    toolchain = "@docker_config//:toolchain",
     toolchain_type = ":toolchain_type",
 )
 
 toolchain(
     name = "default_windows_toolchain",
-    exec_compatible_with = [
-        "@bazel_tools//platforms:windows",
-        "@bazel_tools//platforms:x86_64",
-    ],
     target_compatible_with = [
         "@bazel_tools//platforms:windows",
         "@bazel_tools//platforms:x86_64",
     ],
-    toolchain = ":default_toolchain_impl",
+    toolchain = "@docker_config//:toolchain",
     toolchain_type = ":toolchain_type",
 )
 
 toolchain(
     name = "default_osx_toolchain",
-    exec_compatible_with = [
-        "@bazel_tools//platforms:osx",
-        "@bazel_tools//platforms:x86_64",
-    ],
     target_compatible_with = [
         "@bazel_tools//platforms:osx",
         "@bazel_tools//platforms:x86_64",
     ],
-    toolchain = ":default_toolchain_impl",
+    toolchain = "@docker_config//:toolchain",
     toolchain_type = ":toolchain_type",
 )

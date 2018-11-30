@@ -35,11 +35,11 @@ function CONTAINS() {
   echo "${complete}" | grep -Fsq -- "${substring}"
 }
 
-function NOT_CONTAINS() {
+function COUNT() {
   local complete="${1}"
   local substring="${2}"
 
-  echo "${complete}" | grep -Fsqv -- "${substring}"
+  echo "${complete}" | grep -Fso -- "${substring}" | wc -l
 }
 
 function EXPECT_CONTAINS() {
@@ -51,13 +51,24 @@ function EXPECT_CONTAINS() {
   CONTAINS "${complete}" "${substring}" || fail "$message"
 }
 
+function EXPECT_CONTAINS_ONCE() {
+  local complete="${1}"
+  local substring="${2}"
+  local count=$(COUNT "${complete}" "${substring}")
+
+  echo Checking "$1" contains "$2" exactly once
+  if [[ count -ne "1" ]]; then
+    fail "${3:-Expected '${substring}' found ${count} in '${complete}'}"
+  fi
+}
+
 function EXPECT_NOT_CONTAINS() {
   local complete="${1}"
   local substring="${2}"
   local message="${3:-Expected '${substring}' found in '${complete}'}"
 
   echo Checking "$1" does not contain "$2"
-  NOT_CONTAINS "${complete}" "${substring}" || fail "$message"
+  ! (CONTAINS "${complete}" "${substring}") || fail "$message"
 }
 
 function stop_containers() {
@@ -268,6 +279,12 @@ function test_java_image() {
   EXPECT_CONTAINS "$(bazel run "$@" testdata:java_image)" "Hello World"
 }
 
+function test_java_partial_entrypoint_image() {
+  cd "${ROOT}"
+  clear_docker
+  EXPECT_CONTAINS "$(bazel run "$@" testdata:java_partial_entrypoint_image examples.images.Binary)" "Hello World"
+}
+
 function test_java_image_with_custom_run_flags() {
   cd "${ROOT}"
   clear_docker
@@ -286,6 +303,13 @@ function test_java_bin_as_lib_image() {
   clear_docker
   bazel run testdata:java_bin_as_lib_image
   docker run -ti --rm bazel/testdata:java_bin_as_lib_image
+}
+
+function test_java_image_arg_echo() {
+  cd "${ROOT}"
+  clear_docker
+  EXPECT_CONTAINS_ONCE "$(bazel run "$@" testdata:java_image_arg_echo)" "arg0"
+  EXPECT_CONTAINS_ONCE "$(docker run -ti --rm bazel/testdata:java_image_arg_echo | tr '\r' '\n')" "arg0"
 }
 
 function test_war_image() {
@@ -307,18 +331,6 @@ function test_war_image_with_custom_run_flags() {
   # flags.
   bazel run testdata:war_image_with_custom_run_flags -- --norun
   EXPECT_CONTAINS "$(cat bazel-bin/testdata/war_image_with_custom_run_flags)" "-i --rm --network=host -e ABC=ABC"
-}
-
-function test_java_runfiles_image() {
-  cd "${ROOT}"
-  clear_docker
-  EXPECT_CONTAINS "$(bazel run "$@" testdata:java_runfiles_image)" "asdf"
-}
-
-function test_java_runfiles_as_lib_image() {
-  cd "${ROOT}"
-  clear_docker
-  EXPECT_CONTAINS "$(bazel run "$@" testdata:java_runfiles_as_lib_image)" "asdf"
 }
 
 function test_scala_image() {
@@ -393,10 +405,7 @@ test_java_image_with_custom_run_flags -c dbg
 test_java_sandwich_image -c opt
 test_java_sandwich_image -c dbg
 test_java_bin_as_lib_image
-test_java_runfiles_image -c opt
-test_java_runfiles_image -c dbg
-test_java_runfiles_as_lib_image -c opt
-test_java_runfiles_as_lib_image -c dbg
+test_java_image_arg_echo
 test_war_image
 test_war_image_with_custom_run_flags
 test_scala_image -c opt

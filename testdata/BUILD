@@ -27,6 +27,8 @@ exports_files(["pause.tar"])
 
 exports_files(["BUILD"])
 
+exports_files(["Runfiles.java"])
+
 genrule(
     name = "gen",
     outs = ["gen.out"],
@@ -816,6 +818,12 @@ java_image(
 )
 
 java_image(
+    name = "java_partial_entrypoint_image",
+    srcs = ["Binary.java"],
+    layers = [":java_image_library"],
+)
+
+java_image(
     name = "java_sandwich_image",
     srcs = ["Binary.java"],
     layers = [":scala_image_library"],
@@ -852,32 +860,10 @@ java_image(
 )
 
 java_image(
-    name = "java_runfiles_image",
-    srcs = ["Runfiles.java"],
-    data = [
-        "foo",
-    ],
-    main_class = "examples.images.Runfiles",
-    deps = [
-        "@bazel_tools//tools/java/runfiles",
-    ],
-)
-
-java_library(
-    name = "java_runfiles_as_lib",
-    srcs = ["Runfiles.java"],
-    data = [
-        "foo",
-    ],
-    deps = [
-        "@bazel_tools//tools/java/runfiles",
-    ],
-)
-
-java_image(
-    name = "java_runfiles_as_lib_image",
-    main_class = "examples.images.Runfiles",
-    runtime_deps = [":java_runfiles_as_lib"],
+    name = "java_image_arg_echo",
+    srcs = ["ArgEcho.java"],
+    args = ["arg0"],
+    main_class = "examples.images.ArgEcho",
 )
 
 war_image(
