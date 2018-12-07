@@ -68,7 +68,6 @@ def py_image(
         base = None,
         launcher = None,
         launcher_args = [],
-        launcher_path = None,
         deps = [],
         layers = [],
         **kwargs):
@@ -108,5 +107,4 @@ def py_image(
         data = kwargs.get("data"),
         launcher = launcher,
         launcher_args = launcher_args,
-        launcher_path = launcher_path,
     )

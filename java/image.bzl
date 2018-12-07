@@ -252,7 +252,6 @@ def java_image(
         base = None,
         launcher = None,
         launcher_args = [],
-        launcher_path = None,
         main_class = None,
         deps = [],
         runtime_deps = [],
@@ -316,7 +315,6 @@ def java_image(
         data = kwargs.get("data"),
         launcher = launcher,
         launcher_args = launcher_args,
-        launcher_path = launcher_path,
     )
 
 def _war_dep_layer_impl(ctx):
@@ -399,7 +397,6 @@ def war_image(
         base = None,
         launcher = None,
         launcher_args = [],
-        launcher_path = None,
         deps = [],
         layers = [],
         **kwargs):
@@ -435,5 +432,4 @@ def war_image(
         tags = tags,
         launcher = launcher,
         launcher_args = launcher_args,
-        launcher_path = launcher_path,
     )

@@ -100,7 +100,6 @@ def nodejs_image(
         base = None,
         launcher = None,
         launcher_args = [],
-        launcher_path = None,
         data = [],
         layers = [],
         node_modules = "//:node_modules",
@@ -148,5 +147,4 @@ def nodejs_image(
         data = kwargs.get("data"),
         launcher = launcher,
         launcher_args = launcher_args,
-        launcher_path = launcher_path,
     )

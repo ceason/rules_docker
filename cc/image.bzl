@@ -62,7 +62,6 @@ def cc_image(
         base = None,
         launcher = None,
         launcher_args = [],
-        launcher_path = None,
         deps = [],
         layers = [],
         binary = None,
@@ -101,5 +100,4 @@ def cc_image(
         data = kwargs.get("data"),
         launcher = launcher,
         launcher_args = launcher_args,
-        launcher_path = launcher_path,
     )
